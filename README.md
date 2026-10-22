@@ -55,5 +55,4 @@ Ubah `API_URL` di `assets/js/config.js` ke URL `/exec` dari deployment Apps Scri
 
 - Tailwind CSS (MIT)
 - Phosphor Icons (MIT)
-- Chart.js (MIT), dimuat dari jsDelivr saat tab Insight dibuka
 - Plus Jakarta Sans (SIL Open Font License), dimuat dari Google Fonts

@@ -11,7 +11,13 @@ function setHidden(el, hidden) {
 
 function setText(id, text) {
   const el = byId(id);
-  if (el) el.textContent = text;
+  if (!el) return;
+  el.textContent = text;
+  if (el.classList.contains('fit')) el.style.setProperty('--fit-len', String(String(text).length));
+}
+
+function fitLen(text) {
+  return `--fit-len:${String(text === null || text === undefined ? '' : text).length}`;
 }
 
 function setActive(container, matcher) {

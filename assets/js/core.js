@@ -32,7 +32,6 @@ const session = {
   profile: store.getJson('pk_profile')
 };
 
-let overviewChartInstance = null;
 let currentUser = null;
 let rawAccounts = [];
 let rawTransactions = [];
@@ -82,7 +81,6 @@ let tabDirty = { home: true, wallet: true, insight: true, history: true };
 const tabScroll = { home: 0, wallet: 0, insight: 0, history: 0 };
 let renderPayload = null;
 let filterTimer = null;
-let chartLibPromise = null;
 
 const HISTORY_PAGE = 25;
 let historyData = [];
@@ -118,9 +116,6 @@ function setTheme(theme) {
   store.set('pk_theme', theme);
   setActive('themeSeg', (btn) => btn.dataset.themeOpt === theme);
   syncThemeColor();
-  if (overviewChartInstance && currentTab === 'insight') {
-    try { renderOverviewChart(); } catch (e) {}
-  }
 }
 
 function isDarkMode() {
@@ -136,11 +131,6 @@ function syncThemeColor() {
     m.setAttribute('content', color);
     m.removeAttribute('media');
   });
-}
-
-function cssColor(name, alpha) {
-  const raw = getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim();
-  return alpha === undefined ? `rgb(${raw})` : `rgb(${raw} / ${alpha})`;
 }
 
 function syncObscureIcons() {
@@ -209,22 +199,6 @@ function togglePasswordVisibility(inputId, btn) {
   if (btn) btn.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Tampilkan password');
 }
 
-function ensureChartLib() {
-  if (window.Chart) return Promise.resolve(true);
-  if (chartLibPromise) return chartLibPromise;
-  chartLibPromise = new Promise((resolve) => {
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
-    s.onload = () => resolve(true);
-    s.onerror = () => {
-      chartLibPromise = null;
-      resolve(false);
-    };
-    document.head.appendChild(s);
-  });
-  return chartLibPromise;
-}
-
 function scheduleFilters() {
   if (filterTimer) clearTimeout(filterTimer);
   filterTimer = setTimeout(() => {
@@ -259,11 +233,7 @@ function renderActiveTab() {
     renderCharts(p.expChart, p.exp);
     renderPiutangSummary(p.piutangData);
     renderPiutangLists(p);
-    ensureChartLib().then((ok) => {
-      if (ok && currentTab === 'insight') {
-        try { renderOverviewChart(); } catch (e) {}
-      }
-    });
+    renderOverviewChart();
   }
   if (currentTab === 'history' && tabDirty.history) {
     tabDirty.history = false;

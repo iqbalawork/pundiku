@@ -2,6 +2,7 @@ function showScreen(name) {
   setHidden('screenBoot', name !== 'boot');
   setHidden('screenLogin', name !== 'login');
   setHidden('screenMain', name !== 'main');
+  setHidden('loginDecor', name !== 'login');
   if (name === 'main') requestAnimationFrame(measureHeader);
   window.scrollTo(0, 0);
 }
@@ -69,12 +70,7 @@ function bindEvents() {
 
   if (window.matchMedia) {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => {
-      syncThemeColor();
-      if (currentTab === 'insight' && overviewChartInstance) {
-        try { renderOverviewChart(); } catch (e) {}
-      }
-    };
+    const onChange = () => syncThemeColor();
     if (mq.addEventListener) mq.addEventListener('change', onChange);
     else if (mq.addListener) mq.addListener(onChange);
   }

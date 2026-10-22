@@ -66,15 +66,15 @@ function trxRow(trx, opts) {
   const pending = !!trx._pending;
   const action = o.onTap || `openModal(${jsArg(trx.id)})`;
   return `
-    <div class="card row-tap flex cursor-pointer items-center gap-3 p-3.5 ${pending ? 'opacity-70' : ''}" role="button" tabindex="0" onclick="${action}" onkeydown="if(event.key==='Enter'){${action}}">
-      <span class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl text-lg ${st.tone}">${ic(st.ic)}</span>
+    <div class="card row-tap flex cursor-pointer items-start gap-3 p-3 ${pending ? 'opacity-70' : ''}" role="button" tabindex="0" onclick="${action}" onkeydown="if(event.key==='Enter'){${action}}">
+      <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl text-base ${st.tone}">${ic(st.ic)}</span>
       <div class="min-w-0 flex-1">
-        <p class="truncate text-[15px] font-bold">${escapeHtml(trx.catName || trx.type)}</p>
-        <p class="truncate text-[12px] font-medium text-muted">${escapeHtml(meta)}</p>
-        ${trx.note ? `<p class="truncate text-[12px] font-medium text-subtle">${escapeHtml(trx.note)}</p>` : ''}
+        <p class="line-clamp-2 break-words text-[15px] font-bold leading-snug">${escapeHtml(trx.catName || trx.type)}</p>
+        <p class="mt-0.5 truncate text-[12px] font-medium text-muted">${escapeHtml(meta)}</p>
+        ${trx.note ? `<p class="line-clamp-1 break-all text-[12px] font-medium text-subtle">${escapeHtml(trx.note)}</p>` : ''}
       </div>
-      <div class="flex flex-shrink-0 flex-col items-end gap-0.5">
-        <p class="num text-[15px] font-extrabold ${st.amt}">${st.sign}${formatRupiah(trx.amount)}</p>
+      <div class="flex flex-shrink-0 flex-col items-end gap-0.5 pt-px">
+        <p class="num whitespace-nowrap text-[14px] font-extrabold leading-snug ${st.amt}">${st.sign}${formatRupiah(trx.amount)}</p>
         ${pending ? `<span class="flex items-center gap-1 text-[11px] font-semibold text-muted">${ic('circle-notch', 'spin')}menyimpan</span>` : ''}
       </div>
     </div>`;
@@ -216,8 +216,8 @@ function showInsightDay(key) {
   });
   byId('daySheetBody').innerHTML = `
     <div class="grid grid-cols-2 gap-3">
-      <div class="rounded-2xl bg-income-soft p-4"><p class="eyebrow text-income">Masuk</p><p class="num mt-1 text-base font-extrabold text-income">${formatRupiah(inc)}</p></div>
-      <div class="rounded-2xl bg-expense-soft p-4"><p class="eyebrow text-expense">Keluar</p><p class="num mt-1 text-base font-extrabold text-expense">${formatRupiah(exp)}</p></div>
+      <div class="fit-box rounded-2xl bg-income-soft p-4"><p class="eyebrow text-income">Masuk</p><p class="num fit mt-1 font-extrabold leading-tight text-income [--fit-max:16px]" style="${fitLen(formatRupiah(inc))}">${formatRupiah(inc)}</p></div>
+      <div class="fit-box rounded-2xl bg-expense-soft p-4"><p class="eyebrow text-expense">Keluar</p><p class="num fit mt-1 font-extrabold leading-tight text-expense [--fit-max:16px]" style="${fitLen(formatRupiah(exp))}">${formatRupiah(exp)}</p></div>
     </div>
     <div class="mt-4 space-y-2.5">${list.map((t) => trxRow(t, { onTap: `closeSheet('daySheet');openModal(${jsArg(t.id)})` })).join('')}</div>`;
   openSheet('daySheet');
@@ -361,9 +361,9 @@ function renderPiutangAnalysis(prefix, a, cfg) {
   }
 
   const metric = (icon, label, value, sub) => `
-    <div class="card p-4">
+    <div class="card fit-box p-4">
       <p class="flex items-center gap-1.5 text-[12px] font-semibold text-muted">${ic(icon)}${label}</p>
-      <p class="num mt-1 truncate text-[15px] font-extrabold">${value}</p>
+      <p class="num fit mt-1 font-extrabold leading-tight [--fit-max:15px]" style="${fitLen(value)}">${value}</p>
       <p class="mt-0.5 truncate text-[12px] font-medium text-muted">${sub}</p>
     </div>`;
 
@@ -615,7 +615,7 @@ function renderAccountList() {
     const active = info.status === 'Aktif';
     const st = ACC_STYLE[info.type] || ACC_STYLE.default;
     return `
-      <div class="card row-tap relative flex h-[148px] cursor-pointer flex-col justify-between overflow-hidden p-4 ${active ? '' : 'border-dashed opacity-75'}" role="button" tabindex="0" onclick="openAccModal(${jsArg(info.id)})" onkeydown="if(event.key==='Enter'){openAccModal(${jsArg(info.id)})}">
+      <div class="card fit-box row-tap relative flex h-[148px] cursor-pointer flex-col justify-between overflow-hidden p-4 ${active ? '' : 'border-dashed opacity-75'}" role="button" tabindex="0" onclick="openAccModal(${jsArg(info.id)})" onkeydown="if(event.key==='Enter'){openAccModal(${jsArg(info.id)})}">
         <div class="flex items-start justify-between">
           <span class="flex h-10 w-10 items-center justify-center rounded-2xl text-lg ${active ? st.tone : 'bg-surface-2 text-muted'}">${ic(st.ic)}</span>
           <button onclick="confirmToggleAccount(${jsArg(info.id)}, event)" class="icon-btn icon-btn-sm ${active ? '' : 'bg-surface-2'}" aria-label="${active ? 'Nonaktifkan' : 'Aktifkan'} rekening">${ic('power')}</button>
@@ -623,7 +623,7 @@ function renderAccountList() {
         <div class="min-w-0">
           <p class="truncate text-[11px] font-bold uppercase tracking-wide text-muted">${escapeHtml(info.platform || info.type)}</p>
           <p class="truncate text-[14px] font-bold">${escapeHtml(info.name)}</p>
-          <p class="num truncate text-[16px] font-extrabold ${info.balance < 0 ? 'text-expense' : ''}">${formatRupiah(info.balance)}</p>
+          <p class="num fit font-extrabold leading-tight [--fit-max:16px] ${info.balance < 0 ? 'text-expense' : ''}" style="${fitLen(formatRupiah(info.balance))}">${formatRupiah(info.balance)}</p>
         </div>
       </div>`;
   }).join('');
@@ -658,75 +658,116 @@ async function confirmToggleAccount(id, event) {
   }
 }
 
+let overviewSelected = null;
+
 function setOverviewView(view) {
   byId('overviewViewType').value = view;
+  overviewSelected = null;
   setActive('overviewSeg', (btn) => btn.dataset.view === view);
   renderOverviewChart();
 }
 
-function renderOverviewChart() {
-  const canvas = byId('overviewChart');
-  if (!canvas) return;
-  if (!window.Chart) {
-    ensureChartLib().then((ok) => { if (ok) renderOverviewChart(); });
-    return;
-  }
-  const viewType = byId('overviewViewType').value;
-  if (overviewChartInstance) overviewChartInstance.destroy();
+function selectOverview(key) {
+  overviewSelected = key;
+  renderOverviewChart();
+}
 
-  const aggregated = {};
-  rawTransactions.filter((trx) => matchesInsightFilters(trx)).forEach((trx) => {
-    if (trx.type === 'Transfer') return;
+function overviewLabel(key, viewType, long) {
+  if (viewType !== 'month') return long ? `Tahun ${key}` : key;
+  const parts = key.split('-');
+  const m = parseInt(parts[1], 10) - 1;
+  return long ? `${MONTH_NAMES[m]} ${parts[0]}` : MONTH_SHORT[m];
+}
+
+function signedRupiah(n) {
+  return `${n > 0 ? '+' : n < 0 ? '-' : ''}${formatRupiah(Math.abs(n))}`;
+}
+
+function renderOverviewChart() {
+  const summary = byId('overviewSummary');
+  const barsBox = byId('overviewBars');
+  if (!summary || !barsBox) return;
+  const viewType = byId('overviewViewType').value;
+
+  const agg = {};
+  rawTransactions.forEach((trx) => {
+    if (trx.type === 'Transfer' || !matchesInsightFilters(trx)) return;
     const d = parseDate(trx.date);
     if (!d) return;
     const key = viewType === 'month' ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` : `${d.getFullYear()}`;
-    if (!aggregated[key]) aggregated[key] = { inc: 0, exp: 0 };
-    if (trx.type === 'Pemasukan') aggregated[key].inc += trx.amount;
-    if (trx.type === 'Pengeluaran') aggregated[key].exp += trx.amount;
+    if (!agg[key]) agg[key] = { inc: 0, exp: 0 };
+    if (trx.type === 'Pemasukan') agg[key].inc += trx.amount;
+    else agg[key].exp += trx.amount;
   });
-  let keys = Object.keys(aggregated).sort();
-  if (viewType === 'month' && keys.length > 6) keys = keys.slice(-6);
-  const labels = keys.map((k) => {
-    if (viewType !== 'month') return k;
-    const parts = k.split('-');
-    return `${MONTH_SHORT[parseInt(parts[1], 10) - 1]} ${parts[0].slice(-2)}`;
-  });
+  const keys = Object.keys(agg).sort().slice(-6);
+  if (!keys.length) {
+    summary.innerHTML = `<div class="rounded-3xl bg-surface-2">${emptyState('list', 'py-6')}</div>`;
+    barsBox.innerHTML = '';
+    return;
+  }
+  if (keys.indexOf(overviewSelected) === -1) overviewSelected = keys[keys.length - 1];
 
-  const font = { family: "'Plus Jakarta Sans', system-ui, sans-serif", size: 11, weight: '600' };
-  const muted = cssColor('muted');
-  overviewChartInstance = new Chart(canvas.getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [
-        { label: 'Pemasukan', data: keys.map((k) => aggregated[k].inc), backgroundColor: cssColor('income'), borderRadius: 8, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.7 },
-        { label: 'Pengeluaran', data: keys.map((k) => aggregated[k].exp), backgroundColor: cssColor('expense'), borderRadius: 8, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.7 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: { duration: 400 },
-      plugins: {
-        legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, boxHeight: 8, color: muted, font: font, padding: 16 } },
-        tooltip: {
-          backgroundColor: cssColor('hero'),
-          titleFont: font,
-          bodyFont: font,
-          padding: 10,
-          cornerRadius: 12,
-          callbacks: { label: (ctx) => ` ${ctx.dataset.label}: ${formatRupiah(ctx.parsed.y)}` }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          grid: { color: cssColor('line') },
-          border: { display: false },
-          ticks: { color: muted, font: font, callback: (v) => (isObscured ? '' : formatShortAmount(v)) }
-        },
-        x: { grid: { display: false }, border: { display: false }, ticks: { color: muted, font: font } }
-      }
-    }
-  });
+  const idx = keys.indexOf(overviewSelected);
+  const cur = agg[overviewSelected];
+  const net = cur.inc - cur.exp;
+  let rate = 'Belum ada pemasukan';
+  if (cur.inc > 0 && net > 0) rate = `Nabung ${fmtPct((net / cur.inc) * 100)} dari pemasukan`;
+  else if (cur.inc > 0 && net < 0) rate = 'Pengeluaran melebihi pemasukan';
+  else if (cur.inc > 0) rate = 'Pas, nggak sisa dan nggak minus';
+  let trend = '';
+  if (idx > 0 && agg[keys[idx - 1]].exp > 0) {
+    const prevExp = agg[keys[idx - 1]].exp;
+    const diff = ((cur.exp - prevExp) / prevExp) * 100;
+    const prevName = overviewLabel(keys[idx - 1], viewType, true);
+    trend = Math.abs(diff) < 0.05
+      ? `Pengeluaran sama kayak ${prevName}.`
+      : `Pengeluaran ${diff > 0 ? 'naik' : 'turun'} ${fmtPct(Math.abs(diff))} dibanding ${prevName}.`;
+  }
+
+  const row = (dot, label, value, cls) => `
+    <div class="flex items-center justify-between gap-3">
+      <span class="flex items-center gap-2 text-[13px] font-semibold text-muted"><span class="h-2.5 w-2.5 rounded-full ${dot}"></span>${label}</span>
+      <span class="num whitespace-nowrap text-[15px] font-extrabold ${cls}">${value}</span>
+    </div>`;
+
+  summary.innerHTML = `
+    <div class="rounded-3xl bg-surface-2 p-4">
+      <div class="flex items-center justify-between gap-2">
+        <p class="text-[15px] font-extrabold">${escapeHtml(overviewLabel(overviewSelected, viewType, true))}</p>
+        ${keys.length > 1 ? '<span class="text-[12px] font-semibold text-muted">Tap bar buat ganti</span>' : ''}
+      </div>
+      <div class="mt-3 space-y-2">
+        ${row('bg-income', 'Masuk', formatRupiah(cur.inc), 'text-income')}
+        ${row('bg-expense', 'Keluar', formatRupiah(cur.exp), 'text-expense')}
+        <div class="h-px bg-line"></div>
+        <div class="flex items-start justify-between gap-3">
+          <span class="text-[13px] font-semibold text-muted">Sisa</span>
+          <span class="text-right">
+            <span class="num block whitespace-nowrap text-[15px] font-extrabold ${net >= 0 ? 'text-income' : 'text-expense'}">${signedRupiah(net)}</span>
+            <span class="block text-[11px] font-semibold text-muted">${escapeHtml(rate)}</span>
+          </span>
+        </div>
+      </div>
+      ${trend ? `<p class="mt-3 border-t border-line pt-3 text-[12px] font-medium leading-relaxed text-muted">${escapeHtml(trend)}</p>` : ''}
+    </div>`;
+
+  const H = 128;
+  const max = Math.max(1, ...keys.map((k) => Math.max(agg[k].inc, agg[k].exp)));
+  const barH = (v) => (v > 0 ? Math.max(6, Math.round((v / max) * H)) : 4);
+  barsBox.innerHTML = keys.map((k, i) => {
+    const d = agg[k];
+    const sel = k === overviewSelected;
+    const n = d.inc - d.exp;
+    const aria = `${overviewLabel(k, viewType, true)}: masuk ${formatRupiah(d.inc)}, keluar ${formatRupiah(d.exp)}`;
+    return `
+      <button type="button" onclick="selectOverview('${k}')" aria-pressed="${sel}" aria-label="${escapeHtml(aria)}" class="flex min-w-0 flex-1 flex-col items-center rounded-2xl py-1 transition ${sel ? '' : 'opacity-40 hover:opacity-70'}">
+        <span class="num mb-1.5 h-4 whitespace-nowrap text-[10px] font-extrabold leading-4 ${sel ? (n >= 0 ? 'text-income' : 'text-expense') : 'invisible'}">${n > 0 ? '+' : n < 0 ? '-' : ''}${formatShortAmount(n)}</span>
+        <span class="flex w-full items-end justify-center gap-1" style="height:${H}px">
+          <span class="w-[38%] max-w-[16px] rounded-full ${d.inc > 0 ? 'bg-income' : 'bg-line'} transition-[height] duration-500" style="height:${barH(d.inc)}px"></span>
+          <span class="w-[38%] max-w-[16px] rounded-full ${d.exp > 0 ? 'bg-expense' : 'bg-line'} transition-[height] duration-500" style="height:${barH(d.exp)}px"></span>
+        </span>
+        <span class="mt-2 rounded-full px-2 py-0.5 text-[11px] font-bold leading-4 ${sel ? 'bg-ink text-bg' : 'text-muted'}">${escapeHtml(overviewLabel(k, viewType, false))}</span>
+        ${viewType === 'month' ? `<span class="mt-0.5 h-3 text-[10px] font-semibold leading-3 text-subtle">${i === 0 || k.endsWith('-01') ? k.slice(0, 4) : ''}</span>` : ''}
+      </button>`;
+  }).join('');
 }

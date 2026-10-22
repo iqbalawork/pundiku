@@ -508,7 +508,7 @@ function applyFilters() {
   const pctDiff = (cur, prev) => (prev === 0 ? (cur > 0 ? 100 : 0) : ((cur - prev) / prev) * 100);
   const incDiff = pctDiff(incThisMonth, incLastMonth);
   const expDiff = pctDiff(expThisMonth, expLastMonth);
-  const formatDiff = (diff) => (diff === 0 ? 'Sama kayak bulan lalu' : `${fmtPct(diff, true)} dari bulan lalu`);
+  const formatDiff = (diff) => (diff === 0 ? 'Sama kayak bulan lalu' : `${fmtPct(diff, true)} vs bulan lalu`);
 
   setText('homeIncMonth', formatRupiah(incThisMonth));
   setText('homeExpMonth', formatRupiah(expThisMonth));
@@ -662,7 +662,7 @@ function applyFilters() {
 
   const netEl = byId('valNetCashFlow');
   netEl.textContent = formatRupiah(netCashFlow);
-  toneText(netEl, netCashFlow >= 0, 'num text-base font-extrabold');
+  toneText(netEl, netCashFlow >= 0, 'num flex-shrink-0 text-base font-extrabold');
 
   const formatDelta = (current, previous, lowerIsBetter) => {
     if (previous === 0) return current === 0 ? { text: 'Sama kayak periode lalu', good: true } : { text: 'Baru ada di periode ini', good: !lowerIsBetter };
