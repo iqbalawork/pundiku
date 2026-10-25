@@ -716,7 +716,7 @@ function applyFilters() {
     ? 'Target bulanan dibandingkan dengan pengeluaran satu bulan penuh.'
     : `Periode yang dipilih ${daysDiff} hari, bukan sebulan penuh, jadi perbandingannya cuma gambaran.`);
 
-  historyData = historyFilteredTrx.slice().reverse();
+  historyData = sortByDateDesc(historyFilteredTrx);
 
   renderPayload = {
     dailyNet: dailyNet,
@@ -726,7 +726,7 @@ function applyFilters() {
     expByAccount: expByAccount,
     exp: exp,
     weekdayAvg: weekdayAvg,
-    todayTrx: todayTrx.slice().reverse(),
+    todayTrx: sortByDateDesc(todayTrx),
     piutangData: piutangData,
     trxTalangan: trxTalangan,
     trxTeman: trxTeman,
@@ -934,6 +934,17 @@ function analyzePiutang(trxList, outCat, inCat) {
   };
 }
 
+function sortByDateDesc(list) {
+  const key = (t) => (/^\d{4}-\d{2}-\d{2}$/.test(String(t.date || '')) ? t.date : '');
+  return list
+    .map((t, i) => ({ t: t, i: i, k: key(t) }))
+    .sort((a, b) => {
+      if (a.k !== b.k) return a.k < b.k ? 1 : -1;
+      return b.i - a.i;
+    })
+    .map((x) => x.t);
+}
+
 function renderPiutangLists(p) {
   const update = (prefix, dataObj, trxList) => {
     const sisa = dataObj.out - dataObj.in;
@@ -943,7 +954,7 @@ function renderPiutangLists(p) {
     setText(`val${prefix}In`, formatRupiah(dataObj.in));
     const cfg = PIUTANG_GROUPS[prefix];
     renderPiutangAnalysis(prefix, analyzePiutang(trxList, cfg.out, cfg.in), cfg);
-    renderTrxList(trxList.slice().reverse(), `list-${prefix}`, { showDate: true });
+    renderTrxList(sortByDateDesc(trxList), `list-${prefix}`, { showDate: true });
   };
   update('Talangan', p.piutangData.talangan, p.trxTalangan);
   update('Teman', p.piutangData.teman, p.trxTeman);
